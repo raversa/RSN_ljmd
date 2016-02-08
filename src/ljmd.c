@@ -16,33 +16,8 @@
 #include "get_a_line.h"
 #include "output.h"
 #include "force.h"
-
-
-/* velocity verlet */
-static void velverlet(mdsys_t *sys)
-{
-    int i;
-
-    /* first part: propagate velocities by half and positions by full step */
-    for (i=0; i<sys->natoms; ++i) {
-        sys->vx[i] += 0.5*sys->dt / mvsq2e * sys->fx[i] / sys->mass;
-        sys->vy[i] += 0.5*sys->dt / mvsq2e * sys->fy[i] / sys->mass;
-        sys->vz[i] += 0.5*sys->dt / mvsq2e * sys->fz[i] / sys->mass;
-        sys->rx[i] += sys->dt*sys->vx[i];
-        sys->ry[i] += sys->dt*sys->vy[i];
-        sys->rz[i] += sys->dt*sys->vz[i];
-    }
-
-    /* compute forces and potential energy */
-    force(sys);
-
-    /* second part: propagate velocities by another half step */
-    for (i=0; i<sys->natoms; ++i) {
-        sys->vx[i] += 0.5*sys->dt / mvsq2e * sys->fx[i] / sys->mass;
-        sys->vy[i] += 0.5*sys->dt / mvsq2e * sys->fy[i] / sys->mass;
-        sys->vz[i] += 0.5*sys->dt / mvsq2e * sys->fz[i] / sys->mass;
-    }
-}
+#include "velverlet1.h"
+#include "velverlet2.h"
 
 /* main */
 int main(int argc, char **argv)
@@ -125,7 +100,8 @@ int main(int argc, char **argv)
             output(&sys, erg, traj);
 
         /* propagate system and recompute energies */
-        velverlet(&sys);
+        velverlet1(&sys);
+        velverlet2(&sys);
         ekin(&sys);
     }
     /**************************************************/
