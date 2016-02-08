@@ -5,7 +5,7 @@ CFLAGS=-Wall -g -O3 -ffast-math -fomit-frame-pointer
 LDLIBS=-lm
 
 # list of source files
-SRC=ljmd.c
+SRC=ljmd.c force.c azzero.c pbc.c
 VPATH=../src
 OBJ=$(SRC:%.c=%.o)
 
