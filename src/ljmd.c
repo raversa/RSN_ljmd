@@ -19,7 +19,6 @@
 const double kboltz=0.0019872067;     /* boltzman constant in kcal/mol/K */
 const double mvsq2e=2390.05736153349; /* m*v^2 in kcal/mol */
 
-typedef struct _mdsys mdsys_t;
 
 /* helper function: read a line and then return
    the first string with whitespace stripped off */
