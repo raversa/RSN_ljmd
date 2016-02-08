@@ -15,11 +15,10 @@ clean:
 	rm -f *.mod *.o ../ljmd-serial.x
 
 ../ljmd-serial.x: $(OBJ)
-	$(CC) -o $@ $(CFLAGS) $< $(LDLIBS)
+	$(CC) -o $@ $(CFLAGS) $^ $(LDLIBS)
 
 # compilation pattern rule for objects
 %.o: %.c
 	$(CC) -c $(CFLAGS) -fPIC $(LDLIBS) $^
 
 ljmd.o: ljmd.c
-force.o: utilities.o

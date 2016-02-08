@@ -2,6 +2,9 @@
    the first string with whitespace stripped off */
 
 #include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+
 #include "constants.h"
 
 int get_a_line(FILE *fp, char *buf)

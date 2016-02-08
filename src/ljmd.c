@@ -12,11 +12,10 @@
 #include <math.h>
 
 #include "constants.h"
-#include "_mdsys.h"
 #include "utilities.h"
 #include "get_a_line.h"
 #include "output.h"
-
+#include "force.h"
 
 
 /* velocity verlet */
