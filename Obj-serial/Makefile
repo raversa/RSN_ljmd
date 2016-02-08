@@ -1,7 +1,7 @@
 # -*- Makefile -*-
 SHELL=/bin/sh
 CC=gcc
-CFLAGS=-Wall -g -O3 -ffast-math -fomit-frame-pointer -Wno-unused-result
+CFLAGS=-Wall -g -O3 -ffast-math -fomit-frame-pointer -fPIC -shared -Wno-unused-result
 LDLIBS=-lm
 
 # list of source files
@@ -19,6 +19,6 @@ clean:
 
 # compilation pattern rule for objects
 %.o: %.c
-	$(CC) -c $(CFLAGS) -fPIC $(LDLIBS) $^
+	$(CC) -c $(CFLAGS) $(LDLIBS) $^
 
 ljmd.o: ljmd.c
