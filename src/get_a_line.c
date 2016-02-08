@@ -2,7 +2,7 @@
    the first string with whitespace stripped off */
 
 #include <stdio.h>
-#include "BLEN.h"
+#include "constants.h"
 
 int get_a_line(FILE *fp, char *buf)
 {

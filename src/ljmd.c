@@ -10,28 +10,12 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include <math.h>
+
+#include "constants.h"
 #include "_mdsys.h"
+#include "utilities.h"
 #include "get_a_line.h"
-#include "BLEN.h"
-#include "azzero.h"
-#include "force.h"
-
-/* a few physical constants */
-const double kboltz=0.0019872067;     /* boltzman constant in kcal/mol/K */
-const double mvsq2e=2390.05736153349; /* m*v^2 in kcal/mol */
-
-
-/* compute kinetic energy */
-static void ekin(mdsys_t *sys)
-{   
-    int i;
-
-    sys->ekin=0.0;
-    for (i=0; i<sys->natoms; ++i) {
-        sys->ekin += 0.5*mvsq2e*sys->mass*(sys->vx[i]*sys->vx[i] + sys->vy[i]*sys->vy[i] + sys->vz[i]*sys->vz[i]);
-    }
-    sys->temp = 2.0*sys->ekin/(3.0*sys->natoms-3.0)/kboltz;
-}
+#include "output.h"
 
 
 
@@ -61,22 +45,8 @@ static void velverlet(mdsys_t *sys)
     }
 }
 
-/* append data to output. */
-static void output(mdsys_t *sys, FILE *erg, FILE *traj)
-{
-    int i;
-    
-    printf("% 8d % 20.8f % 20.8f % 20.8f % 20.8f\n", sys->nfi, sys->temp, sys->ekin, sys->epot, sys->ekin+sys->epot);
-    fprintf(erg,"% 8d % 20.8f % 20.8f % 20.8f % 20.8f\n", sys->nfi, sys->temp, sys->ekin, sys->epot, sys->ekin+sys->epot);
-    fprintf(traj,"%d\n nfi=%d etot=%20.8f\n", sys->natoms, sys->nfi, sys->ekin+sys->epot);
-    for (i=0; i<sys->natoms; ++i) {
-        fprintf(traj, "Ar  %20.8f %20.8f %20.8f\n", sys->rx[i], sys->ry[i], sys->rz[i]);
-    }
-}
-
-
 /* main */
-int main(int argc, char **argv) 
+int main(int argc, char **argv)
 {
     int nprint, i;
     char restfile[BLEN], trajfile[BLEN], ergfile[BLEN], line[BLEN];
@@ -139,7 +109,7 @@ int main(int argc, char **argv)
     sys.nfi=0;
     force(&sys);
     ekin(&sys);
-    
+
     erg=fopen(ergfile,"w");
     traj=fopen(trajfile,"w");
 
