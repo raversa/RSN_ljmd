@@ -5,7 +5,7 @@ CFLAGS=-Wall -g -O3 -ffast-math -fomit-frame-pointer
 LDLIBS=-lm
 
 # list of source files
-SRC=ljmd.c
+SRC=ljmd.c get_a_line.c
 VPATH=../src
 OBJ=$(SRC:%.c=%.o)
 
@@ -20,7 +20,8 @@ clean:
 
 # compilation pattern rule for objects
 %.o: %.c
-	$(CC) -c $(CFLAGS) $<
+	$(CC) -c $(CFLAGS) $^
 
 # dependencies
 ljmd.o: ljmd.c
+

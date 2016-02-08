@@ -11,43 +11,13 @@
 #include <stdlib.h>
 #include <math.h>
 #include "_mdsys.h"
-
-/* generic file- or pathname buffer length */
-#define BLEN 200
+#include "get_a_line.h"
+#include "BLEN.h"
 
 /* a few physical constants */
 const double kboltz=0.0019872067;     /* boltzman constant in kcal/mol/K */
 const double mvsq2e=2390.05736153349; /* m*v^2 in kcal/mol */
 
-
-/* helper function: read a line and then return
-   the first string with whitespace stripped off */
-static int get_a_line(FILE *fp, char *buf)
-{
-    char tmp[BLEN], *ptr;
-
-    /* read a line and cut of comments and blanks */
-    if (fgets(tmp,BLEN,fp)) {
-        int i;
-
-        ptr=strchr(tmp,'#');
-        if (ptr) *ptr= '\0';
-        i=strlen(tmp); --i;
-        while(isspace(tmp[i])) {
-            tmp[i]='\0';
-            --i;
-        }
-        ptr=tmp;
-        while(isspace(*ptr)) {++ptr;}
-        i=strlen(ptr);
-        strcpy(buf,tmp);
-        return 0;
-    } else {
-        perror("problem reading input");
-        return -1;
-    }
-    return 0;
-}
  
 /* helper function: zero out an array */
 static void azzero(double *d, const int n)
