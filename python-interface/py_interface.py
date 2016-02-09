@@ -2,7 +2,7 @@ from sys import argv
 import numpy as np
 from os.path import dirname
 from os import chdir
-from ctypes import Structure, POINTER, c_double, c_int, cdll
+from ctypes import Structure, POINTER, c_double, c_int, RTLD_GLOBAL, CDLL
 
 class Mdsys(object):
 	def __init__(self, natoms, nfi, nsteps, dt, mass, epsilon, sigma, box, rcut, ekin, epot, temp, r, v, f):
@@ -24,18 +24,18 @@ class Mdsys(object):
 
 	def as_ctype(self):
 		cmdsys= C_Mdsys()
-		cmdsys.natoms = self.natoms
-		cmdsys.nfi = self.nfi
-		cmdsys.nsteps = self.nsteps
-		cmdsys.dt = self.dt
-		cmdsys.mass = self.mass
-		cmdsys.epsilon = self.epsilon
-		cmdsys.sigma = self.sigma
-		cmdsys.box = self.box
-		cmdsys.cut = self.rcut
-		cmdsys.ekin = self.ekin
-		cmdsys.epot = self.epot
-		cmdsys.temp = self.temp
+		cmdsys.natoms = c_int(self.natoms)
+		cmdsys.nfi = c_int(self.nfi)
+		cmdsys.nsteps = c_int(self.nsteps)
+		cmdsys.dt = c_double(self.dt)
+		cmdsys.mass = c_double(self.mass)
+		cmdsys.epsilon = c_double(self.epsilon)
+		cmdsys.sigma = c_double(self.sigma)
+		cmdsys.box = c_double(self.box)
+		cmdsys.cut = c_double(self.rcut)
+		cmdsys.ekin = c_double(self.ekin)
+		cmdsys.epot = c_double(self.epot)
+		cmdsys.temp = c_double(self.temp)
 		rx = self.r[0]
 		cmdsys.rx = rx.ctypes.data_as(POINTER(c_double))
 		ry = self.r[1]
@@ -58,15 +58,15 @@ class Mdsys(object):
 
 
 class C_Mdsys(Structure):
-	_fields_ = [("natoms", c_int), 
-				("nfi", c_int), 
-				("nsteps", c_int),
-				("dt", c_double),
+	_fields_ = [("natoms", c_int),  
 				("mass", c_double),
 				("epsilon", c_double),
 				("sigma", c_double),
-				("box", c_double),
 				("rcut", c_double),
+				("box", c_double),
+				("nsteps", c_int),
+				("dt", c_double),
+				("nfi", c_int),
 				("ekin", c_double),
 				("epot", c_double),
 				("temp", c_double),
@@ -79,8 +79,6 @@ class C_Mdsys(Structure):
 				("fx", POINTER(c_double)),
 				("fy", POINTER(c_double)),
 				("fz", POINTER(c_double)),]
-
-
 
 
 if __name__ == '__main__' :
@@ -119,11 +117,20 @@ if __name__ == '__main__' :
 
 
 	# mdsys = object of the Mdsys class
-	mdsys = Mdsys(natoms, 0, nsteps, time_step,mass, epsilon, sigma, box_length, rcut, 0, 0, 0, positions, velocities, forces)
+	mdsys = Mdsys(natoms, 0, nsteps, time_step, mass, epsilon, sigma, box_length, rcut, 0, 0, 0, positions, velocities, forces)
 		
 	# loading all the functions
-	force_file = cdll.LoadLibrary("../lib-serial/force.so")
+	utilities_file = CDLL("../lib-serial/utilities.so", mode = RTLD_GLOBAL)
+	azzero = utilities_file.azzero
+	ekin = utilities_file.ekin
+	force_file = CDLL("../lib-serial/force.so", mode = RTLD_GLOBAL)
 	force = force_file.force
+	
+	azzero(mdsys.r[0].ctypes.data_as(POINTER(c_double)), 108)
+	print(mdsys.r)
+
+	ekin(mdsys.as_ctype())
+
 	
 
 

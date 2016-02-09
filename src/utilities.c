@@ -1,5 +1,6 @@
 #include "constants.h"
 #include "_mdsys.h"
+#include <stdio.h>
 
 /* helper function: apply minimum image convention */
 double pbc(double x, const double boxby2)
@@ -27,6 +28,7 @@ void ekin(mdsys_t *sys)
     int i;
 
     sys->ekin=0.0;
+	printf("%d\n",sys->natoms);
     for (i=0; i<sys->natoms; ++i) {
         sys->ekin += 0.5*mvsq2e*sys->mass*(sys->vx[i]*sys->vx[i] + sys->vy[i]*sys->vy[i] + sys->vz[i]*sys->vz[i]);
     }
