@@ -12,21 +12,11 @@ OBJ=$(SRC:%.c=%.o)
 default: ../ljmd-serial.x
 
 clean:
-	rm -f *.mod *.o ../ljmd-serial.x
+	rm -f *.o ../ljmd-serial.x
 
 ../ljmd-serial.x: $(OBJ)
 	$(CC) -o $@ $(CFLAGS) ../src/ljmd.c $^ $(LDLIBS)
 
-# compilation pattern rule for objects
 %.o: %.c
-	$(CC) $(CFLAGS) -shared $(LDLIBS) $^ -o $@
-
-ljmd.o: ljmd.c
-	$(CC) $(CFLAGS) -shared $(LDLIBS) $< -o $@
-
-utilities.o: utilities.c
-	$(CC) $(CFLAGS) -shared $(LDLIBS) $< -o $@
-
-force.o: force.c utilities.o
-	$(CC) $(CFLAGS) -shared $(LDLIBS) $< -o $@
+	$(CC) -c $(CFLAGS) $(LDLIBS) $^ -o $@
 
