@@ -1,21 +1,22 @@
 # -*- Makefile -*-
 SHELL=/bin/sh
-CC=gcc
+CC=mpicc
+MPICC=mpicc
 CFLAGS=-Wall -g -O3 -ffast-math -fomit-frame-pointer -Wno-unused-result
 LDLIBS=-lm
 
 # list of source files
 SRC=ljmd.c force.c utilities.c get_a_line.c output.c velverlet1.c velverlet2.c
-VPATH=../src-serial
+VPATH=../src-parallel
 OBJ=$(SRC:%.c=%.o)
 
-default: ../ljmd-serial.x
+default: ../ljmd-parallel.x
 
 clean:
-	rm -f *.mod *.o ../ljmd-serial.x
+	rm -f *.mod *.o ../ljmd-parallel.x
 
-../ljmd-serial.x: $(OBJ)
-	$(CC) -o $@ $(CFLAGS) $^ $(LDLIBS)
+../ljmd-parallel.x: $(OBJ)
+	$(MPICC) -o $@ $(CFLAGS) $^ $(LDLIBS)
 
 # compilation pattern rule for objects
 %.o: %.c
