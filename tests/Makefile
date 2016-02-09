@@ -8,17 +8,20 @@ LDLIBS= -ldl
 SRC1 = test1.c
 SRC2 = test2.c
 SRC3 = test3.c
+SRC4 = test4.c
 
 
 VPATH=../Obj-serial/
 OBJ1=$(SRC1:%.c=%.o)
 OBJ2=$(SRC2:%.c=%.o)
 OBJ3=$(SRC3:%.c=%.o)
+OBJ4=$(SRC4:%.c=%.o)
 
-default: test1.x test2.x test3.x
+default: test1.x test2.x test3.x test4.x
 	./test1.x
 	./test2.x
 	./test3.x
+	./test4.x
 
 clean:
 	rm -f *.mod *.o *.x
@@ -34,6 +37,10 @@ test2.x: $(OBJ2)
 # linker rule
 test3.x: $(OBJ3)
 	$(CC) -o $@ $(CFLAGS) $^ $(VPATH)force.o $(VPATH)utilities.o $(LDLIBS)
+	
+# linker rule
+test4.x: $(OBJ4)
+	$(CC) -o $@ $(CFLAGS) $^ $(LDLIBS)
 
 
 # compilation pattern rule for objects
