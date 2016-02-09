@@ -12,10 +12,14 @@ int main(int argc, char **argv)
 
 	if (handle)
 	{
-		printf("ok!! \n");
+		force = (void (*)(mdsys_t *sys)) dlsym(handle, "force");
+		(*force)(*sys);
 		dlclose(handle);
-	} else {
-	    printf("Non va\n");
 	}
+	else
+	{
+	    return 1;
+	}
+
 	return 0;
 }
