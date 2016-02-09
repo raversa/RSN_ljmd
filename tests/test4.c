@@ -92,9 +92,7 @@ int main(int argc, char **argv)
         if (error == 0)
             printf("test passed\n");
         else
-            printf("test failed\n");
-        
-        printf("kine  = %.14e\n",sys.ekin);
+            printf("test failed\n");        
     }
     else
     {
