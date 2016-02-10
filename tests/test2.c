@@ -4,7 +4,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "../src/_mdsys.h"
-#include "../src/utilities.h"
 
 mdsys_t get_me_three_atoms()
 {
@@ -53,42 +52,50 @@ mdsys_t get_me_three_atoms()
     sys.rx[2] = 6.67103294321331 - 0.3 * sys.rcut;
     sys.ry[2] = -10.6146871435653 - 0.3 * sys.rcut;
     sys.rz[2] = 12.6336939877734 - 0.3 * sys.rcut;
+    
+    sys.fx[0] = -0.23337371610251;
+    sys.fy[0] = 0.14024895642290;
+    sys.fz[0] = 0.09312475967961;
+    
+    sys.fx[1] = -0.23337371610251;
+    sys.fy[1] = 0.14024895642290;
+    sys.fz[1] = 0.09312475967961;
+    
+    sys.fx[2] = -0.23337371610251;
+    sys.fy[2] = 0.14024895642290;
+    sys.fz[2] = 0.09312475967961;
 
     sys.epot = 0.;
-
-    azzero(sys.fx, sys.natoms);
-    azzero(sys.fy, sys.natoms);
-    azzero(sys.fz, sys.natoms);
 
     return sys;
 }
 
 int main(int argc, char **argv)
 {
-    void (*force)(mdsys_t *sys); // pointer to function force
+    void (*func_to_be_tested)(mdsys_t *sys); // pointer to function
     void *handle; // handle for dynamics objects
-    handle = dlopen("../lib-serial/force.so", RTLD_LAZY);
+    handle = dlopen("../lib-serial/velverlet1.so", RTLD_LAZY);
 
     if (handle)
     {
         mdsys_t sys = get_me_three_atoms();
-        force = (void (*)(mdsys_t *sys)) dlsym(handle, "force");
-        (*force)(&sys);
+        func_to_be_tested = (void (*)(mdsys_t *sys)) dlsym(handle, "velverlet1");
+        (*func_to_be_tested)(&sys);
         dlclose(handle);
-
-        double expected_x[3] = {-0.23337371610251,0.14024895642290,0.09312475967961};
-        double expected_y[3] = {-0.23337371610251,0.14024895642290,0.09312475967961};
-        double expected_z[3] = {-0.23337371610251,0.14024895642290,0.09312475967961};
+        
+        double expected_x[3] = {-1.56432246214823e-03,4.16767102576515e-04,-7.56113495623339e-04};
+        double expected_y[3] = {4.84975085639253e-04,2.28585222301766e-05,4.07101382091038e-04};
+        double expected_z[3] = {-4.33524817328840e-04,-6.19850404627457e-04,-4.65201989340564e-04};
 
         int i;
         int error = 0;
         for (i=0; i < sys.natoms; i++)
-        {
-            if (sys.fx[i]-expected_x[i] > 1e-10)
+        {   
+            if (sys.vx[i]-expected_x[i] > 1e-10)
                 error = 1;
-            if (sys.fy[i]-expected_y[i] > 1e-10)
+            if (sys.vy[i]-expected_y[i] > 1e-10)
                 error = 1;
-            if (sys.fz[i]-expected_z[i] > 1e-10)
+            if (sys.vz[i]-expected_z[i] > 1e-10)
                 error = 1;
         }
         if (error == 0)
