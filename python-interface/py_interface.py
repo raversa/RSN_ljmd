@@ -201,7 +201,30 @@ if __name__ == '__main__' :
     ekin = lambda x: utilities_file.ekin(pointer(x))
     force_file = CDLL("../lib-serial/force.so", mode = RTLD_GLOBAL)
     force = lambda x: force_file.force(pointer(x))
+    velverlet1_file = CDLL("../lib-serial/velverlet1.so", mode = RTLD_GLOBAL)
+    velverlet1 = lambda x: velverlet1_file.velverlet1(pointer(x))
+    velverlet2_file = CDLL("../lib-serial/velverlet2.so", mode = RTLD_GLOBAL)
+    velverlet2 = lambda x: velverlet2_file.velverlet2(pointer(x))
     
     ekin(mdsys.as_ctype())
     force(mdsys.as_ctype())
-    print(mdsys.ekin)
+
+    print("Starting simulation...")
+    print("Ekin: {:<20} Epot: {:<20} Etot: {:<20}".format(mdsys.ekin, mdsys.epot, mdsys.ekin + mdsys.epot))
+
+    # main MD loop
+    for mdsys.nfi in range(mdsys.nsteps):
+        #propagate system and recompute energies
+        velverlet1(mdsys.as_ctype())
+        velverlet2(mdsys.as_ctype())
+        ekin(mdsys.as_ctype())
+
+    print("Simulation done")
+    print("Ekin: {:<20} Epot: {:<20} Etot: {:<20}".format(mdsys.ekin, mdsys.epot, mdsys.ekin + mdsys.epot))
+
+
+
+
+
+
+
